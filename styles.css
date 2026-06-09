@@ -52,8 +52,13 @@ body {
   mix-blend-mode: screen;
   filter: blur(14px) saturate(1.05);
   transform: translate3d(0,0,0) scale(var(--spot-scale));
-  transition: transform 220ms linear, background-position 220ms linear, opacity 220ms linear;
-  will-change: transform, background-position, opacity;
+  opacity: 0;
+  transition: opacity 420ms var(--ease), transform 220ms linear, background-position 220ms linear;
+  will-change: opacity, transform, background-position;
+}
+
+.bg-spot.is-visible {
+  opacity: 1;
 }
 
 a {

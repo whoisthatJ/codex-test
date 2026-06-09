@@ -24,6 +24,8 @@ window.addEventListener("scroll", updateHeader, { passive: true });
 const root = document.documentElement;
 let spotFrame = null;
 
+const bgSpot = document.querySelector('.bg-spot');
+
 const updateBgSpot = () => {
   const maxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
   const progress = Math.min(window.scrollY / maxScroll, 1);
@@ -38,6 +40,13 @@ const updateBgSpot = () => {
   root.style.setProperty("--spot-y", `${spotY.toFixed(2)}px`);
   root.style.setProperty("--spot-scale", `${spotScale.toFixed(3)}`);
   root.style.setProperty("--spot-opacity", `${spotOpacity.toFixed(3)}`);
+
+  // show/hide logic: reveal spot once user scrolls a bit, hide near top
+  const visibleThreshold = 12; // pixels scrolled to start showing
+  if (bgSpot) {
+    if (window.scrollY > visibleThreshold) bgSpot.classList.add('is-visible');
+    else bgSpot.classList.remove('is-visible');
+  }
 
   spotFrame = null;
 };
