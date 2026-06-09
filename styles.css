@@ -13,6 +13,11 @@
   --green: #61705a;
   --max: 1180px;
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --scroll-progress: 0;
+  --gradient-x: 0px;
+  --gradient-y: 0px;
+  --gradient-rotate: 0deg;
+  --accent-hue: 0deg;
 }
 
 * {
@@ -29,6 +34,52 @@ body {
   color: var(--text);
   font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   overflow-x: hidden;
+  isolation: isolate;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: -18vh -14vw;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      calc(118deg + var(--gradient-rotate)),
+      rgba(126, 30, 32, 0.42) 0%,
+      rgba(126, 30, 32, 0) 28%,
+      rgba(83, 123, 146, 0.3) 48%,
+      rgba(83, 123, 146, 0) 68%,
+      rgba(182, 138, 71, 0.22) 100%
+    ),
+    linear-gradient(
+      calc(28deg - var(--gradient-rotate)),
+      rgba(97, 112, 90, 0) 0%,
+      rgba(97, 112, 90, 0.22) 36%,
+      rgba(201, 50, 50, 0.14) 62%,
+      rgba(97, 112, 90, 0) 100%
+    ),
+    linear-gradient(180deg, rgba(12, 12, 13, 0.1), rgba(12, 12, 13, 0.78));
+  background-size: 150% 150%, 180% 180%, 100% 100%;
+  background-position:
+    calc(12% + var(--gradient-x)) calc(8% + var(--gradient-y)),
+    calc(88% - var(--gradient-x)) calc(20% - var(--gradient-y)),
+    0 0;
+  filter: hue-rotate(var(--accent-hue)) saturate(calc(1 + var(--scroll-progress) * 0.22));
+  opacity: 0.86;
+  transform: translate3d(
+      calc(var(--gradient-x) * -0.18),
+      calc(var(--gradient-y) * -0.12),
+      0
+    )
+    scale(1.04);
+  transition: filter 160ms linear, background-position 160ms linear, transform 160ms linear;
+}
+
+main,
+.site-footer {
+  position: relative;
+  z-index: 1;
 }
 
 a {
@@ -395,6 +446,7 @@ h3 {
 .contact {
   max-width: calc(var(--max) + 144px);
   margin: 0 auto;
+  position: relative;
 }
 
 .intro-grid {
@@ -419,7 +471,7 @@ h3 {
   gap: clamp(28px, 5vw, 72px);
   align-items: stretch;
   background:
-    linear-gradient(90deg, rgba(12, 12, 13, 0.94), rgba(12, 12, 13, 0.64)),
+    linear-gradient(90deg, rgba(12, 12, 13, 0.86), rgba(12, 12, 13, 0.48)),
     linear-gradient(135deg, rgba(201, 50, 50, 0.18), rgba(83, 123, 146, 0.18));
   background-size: 100% 100%, 180% 180%;
   border-top: 1px solid var(--line);

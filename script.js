@@ -12,13 +12,42 @@ const revealTargets = [
   ".contact-form",
   ".site-footer",
 ];
+const root = document.documentElement;
+let scrollFrame = null;
 
 const updateHeader = () => {
   header.classList.toggle("is-scrolled", window.scrollY > 12);
 };
 
+const updateScrollGradient = () => {
+  const maxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
+  const progress = Math.min(window.scrollY / maxScroll, 1);
+  const wave = Math.sin(progress * Math.PI * 2);
+
+  root.style.setProperty("--scroll-progress", progress.toFixed(4));
+  root.style.setProperty("--gradient-x", `${(progress * 220 - 80).toFixed(2)}px`);
+  root.style.setProperty("--gradient-y", `${(wave * 90).toFixed(2)}px`);
+  root.style.setProperty("--gradient-rotate", `${(progress * 46).toFixed(2)}deg`);
+  root.style.setProperty("--accent-hue", `${(progress * 18).toFixed(2)}deg`);
+  scrollFrame = null;
+};
+
+const requestScrollGradientUpdate = () => {
+  if (scrollFrame) return;
+  scrollFrame = requestAnimationFrame(updateScrollGradient);
+};
+
 updateHeader();
-window.addEventListener("scroll", updateHeader, { passive: true });
+updateScrollGradient();
+window.addEventListener(
+  "scroll",
+  () => {
+    updateHeader();
+    requestScrollGradientUpdate();
+  },
+  { passive: true }
+);
+window.addEventListener("resize", requestScrollGradientUpdate);
 
 document.querySelectorAll("a[href^='#']").forEach((link) => {
   link.addEventListener("click", (event) => {
