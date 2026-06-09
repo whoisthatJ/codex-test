@@ -12,6 +12,7 @@
   --gold: #b68a47;
   --green: #61705a;
   --max: 1180px;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 * {
@@ -27,6 +28,7 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  overflow-x: hidden;
 }
 
 a {
@@ -53,7 +55,8 @@ textarea {
   gap: 24px;
   padding: 18px clamp(18px, 4vw, 48px);
   color: var(--text);
-  transition: background 180ms ease, border-color 180ms ease;
+  transition: background 180ms ease, border-color 180ms ease, transform 500ms var(--ease);
+  animation: headerDrop 700ms var(--ease) both;
 }
 
 .site-header.is-scrolled {
@@ -89,12 +92,37 @@ textarea {
 
 .main-nav a,
 .header-cta {
-  transition: color 180ms ease;
+  position: relative;
+  transition: color 180ms ease, border-color 180ms ease, background 180ms ease;
+}
+
+.main-nav a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -8px;
+  height: 2px;
+  background: var(--red);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 260ms var(--ease);
 }
 
 .main-nav a:hover,
+.main-nav a.is-active,
 .header-cta:hover {
   color: var(--text);
+}
+
+.main-nav a:hover::after,
+.main-nav a.is-active::after {
+  transform: scaleX(1);
+}
+
+.header-cta:hover {
+  border-color: rgba(201, 50, 50, 0.65);
+  background: rgba(201, 50, 50, 0.12);
 }
 
 .header-cta {
@@ -113,6 +141,7 @@ textarea {
   overflow: hidden;
   padding: 96px clamp(20px, 5vw, 72px) 36px;
   border-bottom: 1px solid var(--line);
+  scroll-margin-top: 72px;
 }
 
 .hero-stage {
@@ -122,6 +151,8 @@ textarea {
     linear-gradient(180deg, rgba(12, 12, 13, 0.1), rgba(12, 12, 13, 0.88) 76%),
     radial-gradient(circle at 24% 30%, rgba(201, 50, 50, 0.26), transparent 34%),
     linear-gradient(100deg, #111 0%, #1c1b1d 46%, #090909 100%);
+  background-size: 100% 100%, 140% 140%, 160% 160%;
+  animation: stageColorFlow 12s ease-in-out infinite alternate;
 }
 
 .curtain-grid {
@@ -132,6 +163,7 @@ textarea {
     linear-gradient(90deg, transparent 0 47px, rgba(255, 255, 255, 0.08) 48px),
     linear-gradient(0deg, transparent 0 47px, rgba(255, 255, 255, 0.05) 48px);
   background-size: 48px 48px;
+  animation: gridDrift 16s linear infinite;
 }
 
 .light-beam {
@@ -143,6 +175,7 @@ textarea {
   clip-path: polygon(42% 0, 58% 0, 100% 100%, 0 100%);
   mix-blend-mode: screen;
   opacity: 0.45;
+  animation: beamFloat 9s ease-in-out infinite alternate;
 }
 
 .beam-one {
@@ -172,6 +205,7 @@ textarea {
   background: #050505;
   filter: drop-shadow(0 24px 28px rgba(0, 0, 0, 0.7));
   transform-origin: bottom center;
+  animation: figureBreath 5s ease-in-out infinite alternate;
 }
 
 .figure::before {
@@ -198,6 +232,7 @@ textarea {
   clip-path: polygon(28% 0, 72% 0, 90% 100%, 10% 100%);
   opacity: 0.88;
   transform: rotate(8deg);
+  animation-delay: 700ms;
 }
 
 .figure-three {
@@ -205,6 +240,7 @@ textarea {
   height: clamp(120px, 18vw, 240px);
   clip-path: polygon(40% 0, 68% 0, 56% 100%, 22% 100%);
   opacity: 0.72;
+  animation-delay: 1200ms;
 }
 
 .hero-content,
@@ -215,6 +251,7 @@ textarea {
 
 .hero-content {
   max-width: 820px;
+  animation: heroLift 900ms 120ms var(--ease) both;
 }
 
 .eyebrow,
@@ -279,6 +316,27 @@ h3 {
   border: 1px solid var(--line);
   font-weight: 800;
   cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: transform 220ms var(--ease), border-color 220ms ease, background 220ms ease, box-shadow 220ms ease;
+}
+
+.button::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.18), transparent);
+  transform: translateX(-120%);
+  transition: transform 520ms var(--ease);
+}
+
+.button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 34px rgba(0, 0, 0, 0.32);
+}
+
+.button:hover::before {
+  transform: translateX(120%);
 }
 
 .button-primary {
@@ -302,6 +360,7 @@ h3 {
   margin-top: 0;
   background: var(--line);
   border: 1px solid var(--line);
+  animation: heroLift 900ms 260ms var(--ease) both;
 }
 
 .hero-facts div {
@@ -325,6 +384,7 @@ h3 {
 
 .section-pad {
   padding: clamp(76px, 10vw, 132px) clamp(20px, 5vw, 72px);
+  scroll-margin-top: 72px;
 }
 
 .intro,
@@ -361,8 +421,10 @@ h3 {
   background:
     linear-gradient(90deg, rgba(12, 12, 13, 0.94), rgba(12, 12, 13, 0.64)),
     linear-gradient(135deg, rgba(201, 50, 50, 0.18), rgba(83, 123, 146, 0.18));
+  background-size: 100% 100%, 180% 180%;
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
+  animation: colorWash 10s ease-in-out infinite alternate;
 }
 
 .showreel-copy {
@@ -377,8 +439,17 @@ h3 {
     linear-gradient(160deg, rgba(201, 50, 50, 0.8), transparent 48%),
     linear-gradient(20deg, rgba(83, 123, 146, 0.78), transparent 54%),
     #111;
+  background-size: 140% 140%, 160% 160%, 100% 100%;
   cursor: pointer;
   overflow: hidden;
+  transition: transform 260ms var(--ease), border-color 260ms ease, box-shadow 260ms ease;
+  animation: reelColorFlow 8s ease-in-out infinite alternate;
+}
+
+.reel-button:hover {
+  transform: translateY(-4px);
+  border-color: rgba(201, 50, 50, 0.7);
+  box-shadow: 0 28px 60px rgba(0, 0, 0, 0.38);
 }
 
 .reel-button::before {
@@ -397,6 +468,12 @@ h3 {
   background: var(--text);
   clip-path: polygon(26% 16%, 26% 84%, 82% 50%);
   transform: translate(-42%, -50%);
+  transition: transform 260ms var(--ease), background 260ms ease;
+}
+
+.reel-button:hover span {
+  background: white;
+  transform: translate(-42%, -50%) scale(1.08);
 }
 
 .section-head {
@@ -420,6 +497,15 @@ h3 {
 .price-card {
   border: 1px solid var(--line);
   background: var(--panel);
+  transition: transform 320ms var(--ease), border-color 320ms ease, background 320ms ease, box-shadow 320ms ease;
+}
+
+.work-card:hover,
+.member-card:hover,
+.price-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(242, 238, 232, 0.28);
+  box-shadow: 0 26px 56px rgba(0, 0, 0, 0.28);
 }
 
 .work-card {
@@ -432,6 +518,14 @@ h3 {
     linear-gradient(180deg, transparent 0 58%, rgba(0, 0, 0, 0.72)),
     radial-gradient(circle at 50% 34%, rgba(242, 238, 232, 0.2), transparent 28%),
     linear-gradient(135deg, rgba(255, 255, 255, 0.08), transparent);
+  background-size: 100% 100%, 150% 150%, 160% 160%;
+  transition: filter 360ms ease, transform 520ms var(--ease);
+  animation: posterPulse 9s ease-in-out infinite alternate;
+}
+
+.work-card:hover .poster-art {
+  filter: saturate(1.18) contrast(1.08);
+  transform: scale(1.025);
 }
 
 .color-red .poster-art {
@@ -491,6 +585,12 @@ h3 {
   gap: 24px;
   padding: 26px 0;
   border-bottom: 1px solid var(--line);
+  transition: padding-left 280ms var(--ease), border-color 280ms ease;
+}
+
+.service-row:hover {
+  padding-left: 14px;
+  border-color: rgba(201, 50, 50, 0.44);
 }
 
 .service-row strong {
@@ -553,6 +653,15 @@ h3 {
   color: var(--text);
   padding: 12px;
   outline: none;
+  transition: border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
+}
+
+.contact-form input:focus,
+.contact-form select:focus,
+.contact-form textarea:focus {
+  border-color: rgba(201, 50, 50, 0.74);
+  background: #121213;
+  box-shadow: 0 0 0 3px rgba(201, 50, 50, 0.14);
 }
 
 .contact-form textarea {
@@ -567,6 +676,130 @@ h3 {
   border-top: 1px solid var(--line);
   color: var(--muted);
   font-size: 13px;
+}
+
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(34px);
+  transition: opacity 760ms var(--ease), transform 760ms var(--ease);
+}
+
+[data-reveal].is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+[data-reveal-delay="1"] {
+  transition-delay: 90ms;
+}
+
+[data-reveal-delay="2"] {
+  transition-delay: 180ms;
+}
+
+[data-reveal-delay="3"] {
+  transition-delay: 270ms;
+}
+
+@keyframes headerDrop {
+  from {
+    opacity: 0;
+    transform: translateY(-16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes heroLift {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes stageColorFlow {
+  from {
+    background-position: 0 0, 0 30%, 0 0;
+  }
+  to {
+    background-position: 0 0, 90% 12%, 80% 0;
+  }
+}
+
+@keyframes colorWash {
+  from {
+    background-position: 0 0, 0 50%;
+  }
+  to {
+    background-position: 0 0, 100% 50%;
+  }
+}
+
+@keyframes reelColorFlow {
+  from {
+    background-position: 0 0, 100% 100%, 0 0;
+  }
+  to {
+    background-position: 100% 20%, 0 0, 0 0;
+  }
+}
+
+@keyframes gridDrift {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 48px 48px;
+  }
+}
+
+@keyframes beamFloat {
+  from {
+    opacity: 0.34;
+  }
+  to {
+    opacity: 0.56;
+  }
+}
+
+@keyframes figureBreath {
+  from {
+    filter: drop-shadow(0 24px 28px rgba(0, 0, 0, 0.7));
+  }
+  to {
+    filter: drop-shadow(0 30px 38px rgba(0, 0, 0, 0.86));
+  }
+}
+
+@keyframes posterPulse {
+  from {
+    background-position: 0 0, 50% 30%, 0 0;
+  }
+  to {
+    background-position: 0 0, 58% 44%, 100% 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 1ms !important;
+  }
+
+  [data-reveal] {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 @media (max-width: 920px) {
