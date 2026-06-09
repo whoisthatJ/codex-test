@@ -13,6 +13,10 @@
   --green: #61705a;
   --max: 1180px;
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --spot-x: 0px;
+  --spot-y: 0px;
+  --spot-scale: 1;
+  --spot-opacity: 0.65;
 }
 
 * {
@@ -29,6 +33,27 @@ body {
   color: var(--text);
   font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   overflow-x: hidden;
+}
+
+/* background spot element (red shimmer) */
+.bg-spot {
+  position: fixed;
+  inset: -18vh -14vw;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at calc(12% + var(--spot-x)) calc(8% + var(--spot-y)),
+    rgba(201, 50, 50, var(--spot-opacity)) 0%,
+    rgba(201, 50, 50, 0.45) 18%,
+    rgba(201, 50, 50, 0.12) 34%,
+    rgba(201, 50, 50, 0) 60%
+  );
+  background-size: 60vmax 60vmax;
+  mix-blend-mode: screen;
+  filter: blur(14px) saturate(1.05);
+  transform: translate3d(0,0,0) scale(var(--spot-scale));
+  transition: transform 220ms linear, background-position 220ms linear, opacity 220ms linear;
+  will-change: transform, background-position, opacity;
 }
 
 a {

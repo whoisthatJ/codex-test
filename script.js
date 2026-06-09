@@ -20,6 +20,38 @@ const updateHeader = () => {
 updateHeader();
 window.addEventListener("scroll", updateHeader, { passive: true });
 
+// --- background spot: update CSS variables on scroll (throttled via rAF)
+const root = document.documentElement;
+let spotFrame = null;
+
+const updateBgSpot = () => {
+  const maxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
+  const progress = Math.min(window.scrollY / maxScroll, 1);
+  const wave = Math.sin(progress * Math.PI * 2);
+
+  const spotX = (progress - 0.5) * 260; // px offset horizontally
+  const spotY = wave * 140; // px vertical oscillation
+  const spotScale = 1 + progress * 0.6 + Math.abs(wave) * 0.2;
+  const spotOpacity = 0.45 + progress * 0.55;
+
+  root.style.setProperty("--spot-x", `${spotX.toFixed(2)}px`);
+  root.style.setProperty("--spot-y", `${spotY.toFixed(2)}px`);
+  root.style.setProperty("--spot-scale", `${spotScale.toFixed(3)}`);
+  root.style.setProperty("--spot-opacity", `${spotOpacity.toFixed(3)}`);
+
+  spotFrame = null;
+};
+
+const requestBgSpotUpdate = () => {
+  if (spotFrame) return;
+  spotFrame = requestAnimationFrame(updateBgSpot);
+};
+
+// init
+updateBgSpot();
+window.addEventListener("scroll", requestBgSpotUpdate, { passive: true });
+window.addEventListener("resize", requestBgSpotUpdate);
+
 document.querySelectorAll("a[href^='#']").forEach((link) => {
   link.addEventListener("click", (event) => {
     const target = document.querySelector(link.getAttribute("href"));
